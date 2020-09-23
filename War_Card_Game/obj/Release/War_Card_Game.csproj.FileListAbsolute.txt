@@ -1,0 +1,7 @@
+C:\Users\mgoldstein\source\repos\War_Card_Game\War_Card_Game\bin\Release\War_Card_Game.exe.config
+C:\Users\mgoldstein\source\repos\War_Card_Game\War_Card_Game\bin\Release\War_Card_Game.exe
+C:\Users\mgoldstein\source\repos\War_Card_Game\War_Card_Game\bin\Release\War_Card_Game.pdb
+C:\Users\mgoldstein\source\repos\War_Card_Game\War_Card_Game\obj\Release\War_Card_Game.csprojAssemblyReference.cache
+C:\Users\mgoldstein\source\repos\War_Card_Game\War_Card_Game\obj\Release\War_Card_Game.csproj.CoreCompileInputs.cache
+C:\Users\mgoldstein\source\repos\War_Card_Game\War_Card_Game\obj\Release\War_Card_Game.exe
+C:\Users\mgoldstein\source\repos\War_Card_Game\War_Card_Game\obj\Release\War_Card_Game.pdb

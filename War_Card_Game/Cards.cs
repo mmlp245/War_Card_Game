@@ -9,8 +9,8 @@ namespace War_Card_Game
     public class Cards
     {
         const int NUM_CARDS = 52;
-        const int NUM_WAR_CARDS = 3;
-        const int CARD_NUM_OFFSET = 2;  // lists are 0-based but playing cards start at 2
+        const int NUM_WAR_CARDS = 3; // how many cards to turn face down during war
+        const int CARD_NUM_OFFSET = 2;  // lists are 0 index but playing cards start at 2
         const string PLAYER_1 = "Player 1";
         const string PLAYER_2 = "Player 2";
         enum Suits
@@ -26,17 +26,17 @@ namespace War_Card_Game
 
         enum HighCards
         {
-            JACK = 9,
+            JACK = 9, // cards begin at 0 so Jacks are 9
             QUEEN,
             KING,
             ACE
         }
 
-        private readonly bool manualPlay;
-        private bool isWar;
+        private readonly bool manualPlay; // requires player input to deal next round
+        private bool isWar; // tracks whether current round is war 
         private List<int> player1Deck;
         private List<int> player2Deck;
-        private List<int> cardsToAdd;
+        private List<int> cardsToAdd; // accumulated cards each round to be added to winner's deck
 
         /// <summary>
         /// Card constructor. Creates the deck, shuffles the cards, and then distributes half to each player.
@@ -59,22 +59,6 @@ namespace War_Card_Game
 
             player1Deck = shuffledCards.Take(shuffledCards.Count / 2).ToList();
             player2Deck = shuffledCards.Skip(shuffledCards.Count / 2).ToList();
-
-            /*Console.WriteLine("deck 1:");
-            for (int i = 0; i < player1Deck.Count; i++)
-            {
-                Console.Write(player1Deck[i] + ", ");
-            }
-            Console.WriteLine(Environment.NewLine);
-            Console.WriteLine("deck 2:");
-            for (int i = 0; i < player2Deck.Count; i++)
-            {
-                Console.Write(player2Deck[i] + ", ");
-            }*/
-            //Console.WriteLine(Environment.NewLine + "Press any key to begin");
-
-            //Console.ReadKey();
-            Console.WriteLine("");
         }
 
         /// <summary>
@@ -82,26 +66,18 @@ namespace War_Card_Game
         /// </summary>
         public void Play()
         {
+            // continue play while both players still have cards
             while(player1Deck.Count > 0 && player2Deck.Count > 0)
             {
-                CompareCards();
-                /*Console.WriteLine("deck 1:");
-                for (int i = 0; i < player1Deck.Count; i++)
-                {
-                    Console.Write(player1Deck[i] + ", ");
-                }
-                Console.WriteLine("");
-                Console.WriteLine("deck 2:");
-                for (int i = 0; i < player2Deck.Count; i++)
-                {
-                    Console.Write(player2Deck[i] + ", ");
-                }
-                Console.WriteLine("");*/
                 if (manualPlay)
                 {
+                    Console.WriteLine("Press any key to draw next cards" + Environment.NewLine);
                     Console.ReadKey();
                 }
+                CompareCards();
             }
+
+            // whoever still has cards is the winner
             if (player2Deck.Count == 0)
             {
                 Console.WriteLine(PLAYER_1 + " Wins!" + Environment.NewLine);
@@ -118,28 +94,27 @@ namespace War_Card_Game
         /// </summary>
         private void CompareCards()
         {
+            // each player compares the first card in their decks
             int player1Card = player1Deck[0];
             int player2Card = player2Deck[0];
 
+            // those cards are added to the pot for that round removed from the player's decks 
             cardsToAdd.Add(player1Card);
             cardsToAdd.Add(player2Card);
-
             player1Deck.RemoveAt(0);
             player2Deck.RemoveAt(0);
 
+            // calculate the numerical value of each card
             int player1CardVal = player1Card % NUM_CARDS_IN_SUIT;
             int player2CardVal = player2Card % NUM_CARDS_IN_SUIT;
 
-            if (manualPlay)
-            {
-                //Console.WriteLine(player1Card);
-                int player1Suit = player1Card / NUM_CARDS_IN_SUIT;
-                PrintCard(PLAYER_1, player1CardVal, player1Suit);
+            // calculate the suit of the card
+            int player1Suit = player1Card / NUM_CARDS_IN_SUIT;
+            // print the card to the screen
+            PrintCard(PLAYER_1, player1CardVal, player1Suit);
 
-                //Console.WriteLine(player2Card);
-                int player2Suit = player2Card / NUM_CARDS_IN_SUIT;
-                PrintCard(PLAYER_2, player2CardVal, player2Suit);
-            }
+            int player2Suit = player2Card / NUM_CARDS_IN_SUIT;
+            PrintCard(PLAYER_2, player2CardVal, player2Suit);
 
             if (player1CardVal > player2CardVal)
             {
@@ -166,12 +141,16 @@ namespace War_Card_Game
         /// <param name="deck">the deck to receive the cards</param>
         private void EndRound(ref List<int> deck)
         {
+            // reset isWar for the next round
             isWar = false;
+
+            // add accumulated cards
             foreach (var card in cardsToAdd)
             {
                 deck.Add(card);
             }
 
+            // clear the accumulated cards once they have been added to the player's deck
             cardsToAdd.Clear();
         }
 
@@ -182,8 +161,15 @@ namespace War_Card_Game
         private void ResolveWar()
         {
             Console.WriteLine(Environment.NewLine + "War!" + Environment.NewLine);
-            Console.ReadKey();
+            if (manualPlay)
+            {
+                Console.ReadKey();
+            }
+
+            // set that this is now war
             isWar = true;
+
+            // if either player does not have enough cards for war, clear their deck to end the game
             if (player1Deck.Count < NUM_WAR_CARDS + 1)
             {
                 Console.WriteLine("Player 1 does not have enough cards for war.");
@@ -196,6 +182,8 @@ namespace War_Card_Game
                 player2Deck.Clear();
                 return;
             }
+
+            // add facedown cards to the pot for this round and remove from player's decks
             for (int i = 0; i < NUM_WAR_CARDS; i++)
             {
                 cardsToAdd.Add(player1Deck[i]);
@@ -203,11 +191,8 @@ namespace War_Card_Game
             }
             player1Deck.RemoveRange(0, NUM_WAR_CARDS);
             player2Deck.RemoveRange(0, NUM_WAR_CARDS);
-            /*foreach (var item in cardsToAdd)
-            {
-                Console.Write(item + ", ");
-            }
-            Console.WriteLine("");*/
+
+            // now compare the new top card
             CompareCards();
         }
 
@@ -256,8 +241,6 @@ namespace War_Card_Game
                     break;
             }
 
-            //Console.WriteLine("Value: " + value);
-            //Console.WriteLine("Suit: " + suit);
             Console.WriteLine(player + " has " + valueStr + " of " + suitStr);
         }
 
@@ -267,16 +250,23 @@ namespace War_Card_Game
         /// <param name="playerName">the player that won the round</param>
         private void PrintRoundWinner(string playerName)
         {
-            if (!manualPlay)
-            {
-                return;
-            }
-            string winStr = " wins this round.";
+            string winStr = " wins this round";
+            string wonCards = " and gains " + cardsToAdd.Count/2 + " card(s).";
+
+            // different wording if this is called during war
             if (isWar)
             {
-                winStr = " wins the war!";
+                winStr = " wins the war";
             }
-            Console.WriteLine(Environment.NewLine + playerName + winStr + Environment.NewLine);
+
+            Console.WriteLine(Environment.NewLine + playerName + winStr + wonCards);
+
+            //Show the score
+            int numPlayer1Cards = playerName == PLAYER_1 ? player1Deck.Count + cardsToAdd.Count : player1Deck.Count;
+            int numPlayer2Cards = playerName == PLAYER_2 ? player2Deck.Count + cardsToAdd.Count : player2Deck.Count;
+            Console.WriteLine(PLAYER_1 + " has " + numPlayer1Cards + " cards.");
+            Console.WriteLine(PLAYER_2 + " has " + numPlayer2Cards + " cards." + Environment.NewLine);
+
         }
     }
 }
