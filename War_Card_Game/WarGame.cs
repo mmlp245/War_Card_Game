@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace War_Card_Game
 {
-    public class Cards
+    public class WarGame
     {
         const int NUM_CARDS = 52;
         const int NUM_WAR_CARDS = 3; // how many cards to turn face down during war
@@ -42,7 +42,7 @@ namespace War_Card_Game
         /// Card constructor. Creates the deck, shuffles the cards, and then distributes half to each player.
         /// </summary>
         /// <param name="manual"></param>
-        public Cards(bool manual)
+        public WarGame(bool manual)
         {
             manualPlay = manual;
             isWar = false;

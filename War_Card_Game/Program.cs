@@ -12,8 +12,8 @@ namespace War_Card_Game
         {
             Console.WriteLine("Manual Play? y/n");
             string manualPlay = Console.ReadLine();
-            Cards cards = new Cards(manualPlay == "y");
-            cards.Play();
+            WarGame game = new WarGame(manualPlay == "y");
+            game.Play();
         }
     }
 }
